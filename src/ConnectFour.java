@@ -145,8 +145,8 @@ public class ConnectFour {
     } while (true);
   }
 
-public static void showBoard(ConnectFour board) {
-    System.out.println(board);
+public static ConnectFour showBoard(ConnectFour board) {
+    return board;
 }
 
 private int getWidth() {
@@ -169,7 +169,7 @@ public static void playerTurn(ConnectFour board, int player, Scanner input) {
     board.chooseAndDrop(symbol, input);
     
     // we display the board
-    showBoard(board);
+    System.out.println(showBoard(board));
     
     // we need to check if a player won. If not, 
     // we continue, otherwise, we display a message
@@ -191,7 +191,7 @@ public static void playGame(int height, int width, int moves)
       // we explain users how to enter their choices
       System.out.println("Use 0-" + (width - 1) + " to choose a column");
       // we display initial board
-      showBoard(board);
+      System.out.println(showBoard(board));
     
       // we iterate until max nb moves be reached
       // simple trick to change player turn at each iteration
