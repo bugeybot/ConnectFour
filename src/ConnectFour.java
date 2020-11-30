@@ -17,6 +17,7 @@ public class ConnectFour {
   private final char[][] grid;
   // we store last move made by a player
   private int lastCol = -1, lastTop = -1;
+  
 
   public ConnectFour(int w, int h, char player1, char player2) {
     width = w;
@@ -144,42 +145,67 @@ public class ConnectFour {
     } while (true);
   }
 
-  public static void main(String[] args) {
-    // we assemble all the pieces of the puzzle for 
+public static void showBoard(ConnectFour board) {
+    System.out.println(board);
+}
+
+private int getWidth() {
+    return this.width;
+}
+
+private int getHeight() {
+    return this.height;
+}
+
+private int getMoves() {
+    return this.width * this.height;
+}
+
+public static void playerTurn(ConnectFour board, int player, Scanner input) {
+    //symbol for current player
+    char symbol = PLAYERS[player];
+    
+    // we ask user to choose a column
+    board.chooseAndDrop(symbol, input);
+    
+    // we display the board
+    showBoard(board);
+    
+    // we need to check if a player won. If not, 
+    // we continue, otherwise, we display a message
+    if (board.isWinningPlay()) {
+      System.out.println("\nPlayer " + symbol + " wins!");
+      return;
+    }
+}
+
+public static void playGame(int height, int width, int moves)
+{
+    //we assemble all the pieces of the puzzle for 
     // building our Connect Four Game
     try (Scanner input = new Scanner(System.in)) {
-      // we define some variables for our game like 
-      // dimensions and nb max of moves
-      int height = 6; int width = 8; int moves = height * width;
-
+    
       // we create the ConnectFour instance
       ConnectFour board = new ConnectFour(width, height, 'R', 'Y');
-
+    
       // we explain users how to enter their choices
       System.out.println("Use 0-" + (width - 1) + " to choose a column");
       // we display initial board
-      System.out.println(board);
-
+      showBoard(board);
+    
       // we iterate until max nb moves be reached
       // simple trick to change player turn at each iteration
       for (int player = 0; moves-- > 0; player = 1 - player) {
-        // symbol for current player
-        char symbol = PLAYERS[player];
-
-        // we ask user to choose a column
-        board.chooseAndDrop(symbol, input);
-
-        // we display the board
-        System.out.println(board);
-
-        // we need to check if a player won. If not, 
-        // we continue, otherwise, we display a message
-        if (board.isWinningPlay()) {
-          System.out.println("\nPlayer " + symbol + " wins!");
-          return;
-        }
+        playerTurn(board, player, input);
       }
       System.out.println("Game over. No winner. Try again!");
     }
+}
+  
+  public static void main(String[] args) {
+      //we define some variables for our game like 
+      // dimensions and nb max of moves
+      int height = 6; int width = 8; int moves = height * width;
+      playGame(height, width, moves);
   }
 }
