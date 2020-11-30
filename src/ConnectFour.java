@@ -5,7 +5,7 @@ import java.util.stream.IntStream;
 
 // we are going to create a simple 2-players Connect Four implementation in Java 8
 /*
-  Nathaniel Pedro Marco
+  Nathaniel Pedro Marco Pedro Was here :)
 */
 public class ConnectFour {
 
