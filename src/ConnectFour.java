@@ -4,6 +4,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 // we are going to create a simple 2-players Connect Four implementation in Java 8
+/*
+  Nathaniel Pedro Marco
+*/
 public class ConnectFour {
 
   // we define characters for players (R for Red, Y for Yellow)
