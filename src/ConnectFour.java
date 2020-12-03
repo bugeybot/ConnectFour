@@ -34,6 +34,7 @@ public class ConnectFour {
 
   // we use Streams to make a more concise method 
   // for representing the board
+  @Override
   public String toString() {
     return IntStream.range(0, this.width).
            mapToObj(Integer::toString).
@@ -119,11 +120,10 @@ public class ConnectFour {
   }
 
   // prompts the user for a column, repeating until a valid choice is made
-  public void chooseAndDrop(char symbol, Scanner input) {
+  public void chooseAndDrop(char symbol, int col) {
     do {
       System.out.println("\nPlayer " + symbol + " turn: ");
-      int col = input.nextInt();
-
+      
       // check if column is ok
       if (!(0 <= col && col < this.width)) {
         System.out.println("Column must be between 0 and " + (this.width - 1));
@@ -144,31 +144,31 @@ public class ConnectFour {
     } while (true);
   }
 
-  public static ConnectFour showBoard(ConnectFour board) {
-    return board;
+  public ConnectFour showBoard() {
+    return this;
   }
 
-  private int getWidth() {
+  public int getWidth() {
     return this.width;
   }
 
-  private int getHeight() {
+  public int getHeight() {
     return this.height;
   }
 
-  private int getMoves() {
+  public int getMoves() {
     return this.width * this.height;
   }
 
-  public static void playerTurn(ConnectFour board, int player, Scanner input) {
+  public static void playerTurn(ConnectFour board, int player, int col) {
     //symbol for current player
     char symbol = PLAYERS[player];
     
     // we ask user to choose a column
-    board.chooseAndDrop(symbol, input);
+    board.chooseAndDrop(symbol, col);
     
     // we display the board
-    System.out.println(showBoard(board));
+    System.out.println(board.showBoard());
     
     // we need to check if a player won. If not, 
     // we continue, otherwise, we display a message
@@ -188,21 +188,22 @@ public class ConnectFour {
       // we explain users how to enter their choices
       System.out.println("Use 0-" + (width - 1) + " to choose a column");
       // we display initial board
-      System.out.println(showBoard(board));
+      System.out.println(board.showBoard());
     
       // we iterate until max nb moves be reached
       // simple trick to change player turn at each iteration
       for (int player = 0; moves-- > 0; player = 1 - player) {
-        playerTurn(board, player, input);
+      int col = 1;
+        playerTurn(board, player, col);
       }
       System.out.println("Game over. No winner. Try again!");
     }
   }
-  // Test function
-  // public static void main(String[] args) {
-  //     //we define some variables for our game like 
-  //     // dimensions and nb max of moves
-  //     int height = 6; int width = 8; int moves = height * width;
-  //     playGame(height, width, moves);
-  // }
+//   Test function
+//   public static void main(String[] args) {
+//       //we define some variables for our game like 
+//       // dimensions and nb max of moves
+//       int height = 6; int width = 8; int moves = height * width;
+//       playGame(height, width, moves);
+//   }
 }
