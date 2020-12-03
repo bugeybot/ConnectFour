@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -26,16 +25,15 @@ class ChatClient {
             while(true) {
                 String clientMsg = sc.nextLine();
                 this.outToServer.writeBytes( clientMsg + "\r\n");
-                if(clientMsg.equals( "{quit}" ))
+                if(clientMsg.equals("{quit}"))
                     break;
             }
             sc.close();
         }
-        
     }
 
     public static void main(String argv[]) throws Exception {
-        Socket connectionSocket = new Socket("localhost", 12345);
+        Socket connectionSocket = new Socket("localhost", 25565);
 
         DataOutputStream outToServer = new DataOutputStream(connectionSocket.getOutputStream());
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
@@ -64,8 +62,7 @@ class ChatClient {
         String serverMessage = null;
             while ((serverMessage = inFromServer.readLine()) != null) 
                 System.out.println(serverMessage);
-        }
-                
+        }           
 //        s.close();
 //        outToServer.close();
 //        connectionSocket.close();
