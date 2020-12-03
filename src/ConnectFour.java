@@ -17,7 +17,6 @@ public class ConnectFour {
   private final char[][] grid;
   // we store last move made by a player
   private int lastCol = -1, lastTop = -1;
-  
 
   public ConnectFour(int w, int h, char player1, char player2) {
     this.width = w;
@@ -145,23 +144,23 @@ public class ConnectFour {
     } while (true);
   }
 
-public static ConnectFour showBoard(ConnectFour board) {
+  public static ConnectFour showBoard(ConnectFour board) {
     return board;
-}
+  }
 
-private int getWidth() {
+  private int getWidth() {
     return this.width;
-}
+  }
 
-private int getHeight() {
+  private int getHeight() {
     return this.height;
-}
+  }
 
-private int getMoves() {
+  private int getMoves() {
     return this.width * this.height;
-}
+  }
 
-public static void playerTurn(ConnectFour board, int player, Scanner input) {
+  public static void playerTurn(ConnectFour board, int player, Scanner input) {
     //symbol for current player
     char symbol = PLAYERS[player];
     
@@ -177,14 +176,12 @@ public static void playerTurn(ConnectFour board, int player, Scanner input) {
       System.out.println("\nPlayer " + symbol + " wins!");
       return;
     }
-}
+  }
 
-public static void playGame(int height, int width, int moves)
-{
+  public static void playGame(int height, int width, int moves) {
     //we assemble all the pieces of the puzzle for 
-    // building our Connect Four Game
+    // building our Con nect Four Game
     try (Scanner input = new Scanner(System.in)) {
-    
       // we create the ConnectFour instance
       ConnectFour board = new ConnectFour(width, height, 'R', 'Y');
     
@@ -200,12 +197,12 @@ public static void playGame(int height, int width, int moves)
       }
       System.out.println("Game over. No winner. Try again!");
     }
-}
-  
-  public static void main(String[] args) {
-      //we define some variables for our game like 
-      // dimensions and nb max of moves
-      int height = 6; int width = 8; int moves = height * width;
-      playGame(height, width, moves);
   }
+  // Test function
+  // public static void main(String[] args) {
+  //     //we define some variables for our game like 
+  //     // dimensions and nb max of moves
+  //     int height = 6; int width = 8; int moves = height * width;
+  //     playGame(height, width, moves);
+  // }
 }
