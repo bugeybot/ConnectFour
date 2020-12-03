@@ -1,205 +1,140 @@
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import java.io.* ;
-import java.net.* ;
-import java.util.* ;
-
-class WebServer
-    {
-
-    private static Map<String, DataOutputStream> clients = new HashMap<>() ;
+class WebServer {
+    private static Map<String, DataOutputStream> clients = new HashMap<>();
 
     // PLAYERS - people who will be playing game
-    private static Map<String, DataOutputStream> players = new HashMap() ; // p
+    private static Map<String, DataOutputStream> players = new HashMap(); // p
 
     // SPECTATORS - same as clients minus the players;
-    private static Map<String, DataOutputStream> spectators = new HashMap() ; // p
+    private static Map<String, DataOutputStream> spectators = new HashMap(); // p
+
+    private static int playerCount;
     
     public static boolean full = false; //p
 
-    static class ClientRequest implements Runnable
-        {
+    static class ClientRequest implements Runnable {
+        Socket connectionSocket;
 
-        Socket connectionSocket ;
-
-        public ClientRequest( Socket socket )
-            {
-            this.connectionSocket = socket ;
-            }
+        public ClientRequest(Socket socket) {
+            this.connectionSocket = socket;
+        }
 
 
         @Override
-        public void run()
-            {
-            try
-                {
-                processRequest() ;
-                }
-            catch ( Exception e )
-                {
-                System.out.println( e ) ;
-                }
-
-            }
+        public void run() {
+            try { processRequest(); }
+            catch (Exception e) { System.out.println(e); }
+        }
 
 
-        private void processRequest() throws Exception
-            {
-            BufferedReader inFromClient = new BufferedReader( new InputStreamReader( connectionSocket.getInputStream() ) ) ;
-            DataOutputStream outToClient = new DataOutputStream( connectionSocket.getOutputStream() ) ;
+        private void processRequest() throws Exception {
+            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+            DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
             
-            int playerCount = 0;
+            playerCount = 0;
 
             // send welcome msg
-            String welcomeMsg = "Welcome! Please enter your name..." ;
-            outToClient.writeBytes( welcomeMsg + "\r\n" ) ;
+            String welcomeMsg = "Welcome! Please enter your name: ";
+            outToClient.writeBytes(welcomeMsg + "\r\n");
 
             // receive name from client
-            String clientName = inFromClient.readLine() ;
-            System.out.println( clientName + " joined the chat!" ) ;
+            String clientName = inFromClient.readLine();
+            System.out.println(clientName + " joined the chat!");
 
             // Send hello msg to the newly connected client
-            String helloMsg = "Hello " + clientName +
-                              "! to the NP chatroom! If you would like to leave, type {quit}" ;
-            outToClient.writeBytes( helloMsg + "\r\n" ) ;
+            String helloMsg = "Hello " + clientName + "! to the NP chatroom! If you would like to leave, type {quit}";
+            outToClient.writeBytes(helloMsg + "\r\n");
 
             // broadcast
-            for ( String name : clients.keySet() )
-                {
-                clients.get( name )
-                       .writeBytes( clientName + " joined the chat!\r\n" ) ;
-                }
+            for (String name : clients.keySet()) clients.get(name).writeBytes(clientName + " joined the chat!\r\n");
 
             // store this name with its corresponding output stream for broadcasting
             // (stored afterwards to avoid sending trivial messages to client)
-            clients.put( clientName, outToClient ) ;
+            clients.put(clientName, outToClient);
 
-            spectators.put( clientName, outToClient ) ;  // p
+            spectators.put(clientName, outToClient); // p
 
             // Get msg from client
-            while ( true )
-                {
-                String clientMessage = null ;
-                while ( ( clientMessage = inFromClient.readLine() ) != null )
-                    {
-                    
- //p down                   
-                    if ( clientMessage.equals( "{joinGame}" ) )
-                        {
-                        // if no one joined red and player hasn't joined yellow
-                        if ( full == false )
-                            {
-                            //adds a player
-                            playerCount +=1;
-                            
-                            //add to player
-                            players.put(clientName, spectators.get( clientName ));
-                            //remove from spectator
-                            spectators.remove( clientName );
-                            
-                            
-                            System.out.println( clientName + " has joined the game" ) ;
-                            
-                            //tell everyone a player joined
-                            for ( String name : clients.keySet() )
-                                {
-                                clients.get( name )
-                                       .writeBytes( clientName +
-                                                    " has joined the game!\r\n" ) ;
-                                }
-                            
-                            if (playerCount >= 2) 
-                                {
-                                full = true;
-                                } 
-                            }
-                        //if full is true
-                        else 
-                            {
-                            System.out.println( clientName + " tried to join but the game is full" ) ;
-                            //tell everyone that spot is taken
-                            for ( String name : clients.keySet() )
-                                {
-                                clients.get( name )
-                                       .writeBytes( clientName +
-                                                    ", SORRY BUT THE GAME IS FULL\r\n" ) ;
-                                }
-                            }
-                        }
-                    
-   //p up                
-                    
-//                    for ( String everyone : players.keySet() )
-//                        {
-//                        if ( everyone != clientName )
-//                            clients.get( clientName )
-//                                   .writeBytes( clientName +  "[player]: " + clientMessage +
-//                                                "\r\n" ) ;
-//                        }
-                        
-                    
-                    
-                    
-                    if ( clientMessage.equals( "{quit}" ) )
-                        {
-                        clients.remove( clientName ) ;
-                        System.out.println( clientName + " left the chat!" ) ;
-                        for ( String name : clients.keySet() )
-                            {
-                            clients.get( name )
-                                   .writeBytes( clientName +
-                                                " left the chat!\r\n" ) ;
-                            }
-                        continue ;
-                        }
-                    for ( String name : clients.keySet() )
-                        {
-                        if ( name != clientName )
-                            clients.get( name )
-                                   .writeBytes( clientName + ": " + clientMessage +
-                                                "\r\n" ) ;
-                        }
+            while (true) {
+                String clientMessage = null;
+                while ((clientMessage = inFromClient.readLine()) != null) {   
+                    //p down                   
+                    if (clientMessage.equals("{joingame}")) joinCommand(clientName);
+
+                    else if (clientMessage.equals("{quit}")) quitCommand(clientName);
+
+                    else if (clientMessage.contains("{place}") && full) {
+                        if (players.containsKey(clientName)) placeCommand(clientName, clientMessage); 
+                        else clients.get(clientName).writeBytes("You're not a player. Only players can make moves.");
+                    }
+
+                    else if (spectators.containsKey(clientName)) for (String name : spectators.keySet()) { 
+                        if (name != clientName) spectators.get(name).writeBytes(clientName + ": " + clientMessage + "\r\n"); 
+                    }
+
+                    else for (String names : clients.keySet()) { 
+                        if (names != clientName) clients.get(names).writeBytes(clientName + ": " + clientMessage + "\r\n"); 
                     }
                 }
-
-            /*
-             * String clientMessage = inFromClient.readLine();
-             * System.out.println("RECEIVED: " + clientMessage); // Parse the request
-             * line to get the file name String fileName =
-             * clientMessage.split(" ")[1].substring(1);
-             * System.out.println("Requested file name: " + fileName); // Read the
-             * content of the file String statusLine = null; Scanner sc = null; try {
-             * // happy path: file is found statusLine = "HTTP/1.1 200 OK\r\n"; sc =
-             * new Scanner(new File(fileName)); } catch (Exception e) { // not so
-             * happy path: file is not found statusLine =
-             * "HTTP/1.1 404 Not Found\r\n"; sc = new Scanner(new File("err.html"));
-             * } // Send the status line outToClient.writeBytes(statusLine); // Send
-             * the separator outToClient.writeBytes("\r\n"); // Send file data while
-             * (sc.hasNextLine()) { outToClient.writeBytes(sc.nextLine() + "\r\n"); }
-             */
-            // Close connection socket once it is done
-            // connectionSocket.close(); not closed because we aren't done receiving
             }
         }
 
-    public static void main( String argv[] ) throws Exception
-        {
-        // Create server socket
-        ServerSocket serverSocket = new ServerSocket( 12345 ) ;
+        private void joinCommand(String clientName) throws IOException {
+            // if no one joined red and player hasn't joined yellow
+            if (full == false) {
+                //adds a player
+                playerCount += 1;
+                
+                //add to player
+                players.put(clientName, spectators.get(clientName));
 
-        System.out.println( "This server is ready to receive" ) ;
+                //remove from spectator
+                spectators.remove(clientName);
+                
+                System.out.println(clientName + " has joined the game");
+                
+                //tell everyone a player joined
+                for (String name : clients.keySet()) clients.get(name).writeBytes(clientName + " has joined the game!\r\n");
+                if (playerCount >= 2) full = true;
+            } else {
+                System.out.println(clientName + " tried to join, but the game is full");
+                //tell everyone that spot is taken
+                for (String name : clients.keySet()) clients.get(name).writeBytes(clientName + " tried to join, but the game is full\r\n");
+            }
+        }
 
-        while ( true )
-            {
-            Socket connectionSocket = serverSocket.accept() ;
+        private void quitCommand(String clientName) throws IOException {
+            clients.remove(clientName);
+            System.out.println(clientName + " left the chat!");
+            for (String name : clients.keySet()) clients.get(name).writeBytes(clientName + " left the chat!\r\n");
+        }
 
-            // Create client request instance
-            ClientRequest request = new ClientRequest( connectionSocket ) ;
+        private void placeCommand(String clientName, String clientMessage) {
+            int col = Integer.parseInt(clientMessage.split(" ")[1]); // this is the column to place the marker in
+            System.out.println(clientName + " has placed a marker on column " + col);
+        }
 
-            // Create a new thread to handle the client request
-            Thread thread = new Thread( request ) ;
+        public static void main(String argv[]) throws Exception {
+            // Create server socket
+            ServerSocket serverSocket = new ServerSocket(25565);
 
-            // Start the thread
-            thread.start() ;
+            System.out.println("This server is ready to receive");
+
+            while (true) {
+                Socket connectionSocket = serverSocket.accept();
+
+                // Create client request instance
+                ClientRequest request = new ClientRequest(connectionSocket);
+
+                // Create a new thread to handle the client request
+                Thread thread = new Thread(request);
+
+                // Start the thread
+                thread.start();
             }
         }
     }
+}
