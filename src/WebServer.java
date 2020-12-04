@@ -74,12 +74,20 @@ class WebServer {
                         if (players.containsKey(clientName)) {
                             if(playersArr.get(clientName) == 'R' && !redWent) {
                                 int col = placeCommand(clientName, clientMessage); 
-                                board.chooseAndDrop(playersArr.get(clientName), col);
+                                for (String names : clients.keySet()) { 
+                                clients.get(names).writeBytes(board.playerTurn(playersArr.get( clientName ), col) + "\r\n");
+                                clients.get(names).writeBytes(board.determineWin(playersArr.get( clientName )) + "\r\n"); 
+
+                                }
                                 redWent = true;                                
                             }
                             else if(playersArr.get(clientName) == 'Y' && redWent) {
-                                int col = placeCommand(clientName, clientMessage); 
-                                board.chooseAndDrop(playersArr.get( clientName ), col);
+                                int col = placeCommand(clientName, clientMessage);
+                                for (String names : clients.keySet()) { 
+                                    clients.get(names).writeBytes(board.playerTurn(playersArr.get( clientName ), col) + "\r\n");
+                                    clients.get(names).writeBytes(board.determineWin(playersArr.get( clientName )) + "\r\n"); 
+
+                            }
                                 redWent = false;
                             }    
                             else players.get(clientName).writeBytes("You've already went, you must wait your turn.");
