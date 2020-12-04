@@ -159,23 +159,26 @@ public class ConnectFour {
   public int getMoves() {
     return this.width * this.height;
   }
+  
+  public String determineWin(char symbol) {
+      //we need to check if a player won. If not, 
+      // we continue, otherwise, we display a message
+      if (this.isWinningPlay()) {
+          System.out.println("\nPlayer " + symbol + " wins!");
+          return "\nPlayer " + symbol + " wins!";
+          }
+          return "";
+  }
 
-  public static void playerTurn(ConnectFour board, int player, int col) {
-    //symbol for current player
-    char symbol = PLAYERS[player];
+  public String playerTurn(char symbol, int col) {
+    //symbol for current player already gathered
     
     // we ask user to choose a column
-    board.chooseAndDrop(symbol, col);
+    this.chooseAndDrop(symbol, col);
     
-    // we display the board
-    System.out.println(board.showBoard());
+    // we return the board
+    return this.showBoard().toString();
     
-    // we need to check if a player won. If not, 
-    // we continue, otherwise, we display a message
-    if (board.isWinningPlay()) {
-      System.out.println("\nPlayer " + symbol + " wins!");
-      return;
-    }
   }
 
   public static void playGame(int height, int width, int moves) {
@@ -194,16 +197,16 @@ public class ConnectFour {
       // simple trick to change player turn at each iteration
       for (int player = 0; moves-- > 0; player = 1 - player) {
       int col = 1;
-        playerTurn(board, player, col);
+        board.playerTurn(PLAYERS[player], col);
       }
       System.out.println("Game over. No winner. Try again!");
     }
   }
-//   Test function
-//   public static void main(String[] args) {
-//       //we define some variables for our game like 
-//       // dimensions and nb max of moves
-//       int height = 6; int width = 8; int moves = height * width;
-//       playGame(height, width, moves);
-//   }
+   //Test function
+   public static void main(String[] args) {
+       //we define some variables for our game like 
+       // dimensions and nb max of moves
+       int height = 6; int width = 8; int moves = height * width;
+       playGame(height, width, moves);
+   }
 }
