@@ -3,30 +3,22 @@ import java.net.*;
 import java.util.*;
 
 
-class ChatClient {
+class Client {
     static class WriteThread implements Runnable {
         Socket connectionSocket;
         DataOutputStream outToServer;
         
-        public WriteThread(DataOutputStream out) {
-            this.outToServer = out;
-        }
+        public WriteThread(DataOutputStream out) { this.outToServer = out; }
         
         @Override
-        public void run() {
-            try {
-                process();
-            } catch (Exception e) {
-                System.out.println(e); 
-            }
-        }    
+        public void run() { try { process(); } catch (Exception e) { System.out.println(e); } }    
+        
         private void process() throws Exception {
             Scanner sc = new Scanner(System.in);
             while(true) {
                 String clientMsg = sc.nextLine();
                 this.outToServer.writeBytes( clientMsg + "\r\n");
-                if(clientMsg.equals("{quit}"))
-                    break;
+                if(clientMsg.equals("{quit}")) break;
             }
             sc.close();
         }
@@ -47,7 +39,7 @@ class ChatClient {
         String name = s.nextLine();
         
         //send the name to the server
-        outToServer.writeBytes( name + "\r\n" );
+        outToServer.writeBytes(name + "\r\n");
         
         //receive hello msg from server
         String helloMsg = inFromServer.readLine();
@@ -59,12 +51,8 @@ class ChatClient {
         
         // Get msg from server
         while (true) {
-        String serverMessage = null;
-            while ((serverMessage = inFromServer.readLine()) != null) 
-                System.out.println(serverMessage);
-        }           
-//        s.close();
-//        outToServer.close();
-//        connectionSocket.close();
+            String serverMessage = null;
+            while ((serverMessage = inFromServer.readLine()) != null) System.out.println(serverMessage);
+        }
     }
 }
