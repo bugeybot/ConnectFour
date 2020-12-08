@@ -32,7 +32,7 @@ We created a connect four implementation where two different clients connect to 
 ## Getting Started
 ### Installation and Setup
 1. First item
-	> git clone git://github.com/drphamwit/node-login.git node-login
+	> git clone insert here
 	> cd node-login
 	> npm install
 2. Second item
