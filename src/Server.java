@@ -47,7 +47,7 @@ class Server {
             System.out.println(clientName + " joined the chat!");
 
             // Send hello msg to the newly connected client
-            String helloMsg = "Hello " + clientName + "! to the NP chatroom! If you would like to leave, type {quit}";
+            String helloMsg = "Hello " + clientName + "! welcome to the Connect Four lobby! If you would like to leave, type {quit}";
             outToClient.writeBytes(helloMsg + "\r\n");
 
             // broadcast
@@ -129,7 +129,10 @@ class Server {
             // if no one joined red and player hasn't joined yellow
             if (full == false) {
                 // adds a player
-                for (int i = 0; i < playerArr.length; i++) if (playerArr[i].equals("")) playerArr[i] = clientName;
+                for (int i = 0; i < playerArr.length; i++) if (playerArr[i].equals("")) {
+                    playerArr[i] = clientName;
+                    break;
+                }
                 playerCount += 1;
                 players.put(clientName, spectators.get(clientName));
 
@@ -156,7 +159,11 @@ class Server {
                 full = false;
                 playerCount -= 1;
 
-                for (int i = 0; i < playerArr.length; i++) if (playerArr[i].equals(clientName)) playerArr[i] = "";
+                for (int i = playerArr.length - 1; i > 0; i--) if (playerArr[i].equals(clientName)) {
+                    playerArr[i] = "";
+                    break;
+                }
+
                 spectators.put(clientName, players.get(clientName));
                 players.remove(clientName);
             } else
@@ -185,6 +192,16 @@ class Server {
                 System.out.println(game.toString());
                 for (String name : clients.keySet()) clients.get(name).writeBytes(game.toString());
 
+                if (game.gameWon) {
+                    for (String name : clients.keySet()) clients.get(name).writeBytes(clientName + " has won the game!\r\n");
+
+                    for (String names : players.keySet()) leaveCommand(names);
+
+                    full = false;
+                    gameRunning = false;
+                    game.gameWon = false;
+                }
+
                 if (whosTurn == 1) whosTurn = 0;
                 else whosTurn = 1;
 
@@ -202,6 +219,9 @@ class Server {
             System.out.println("This server is ready to receive!");
 
             playerCount = 0;
+
+            playerArr[0] = "";
+            playerArr[1] = "";
 
             while (true) {
                 Socket connectionSocket = serverSocket.accept();
