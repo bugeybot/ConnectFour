@@ -105,7 +105,7 @@ public class ConnectFour {
     if (!(0 <= col && col < this.width)) {
       System.out.println("Column must be between 0 and " + (this.width - 1));
       turnFailed = true;
-      return "Column must be between 0 and " + (this.width - 1);
+      return "Column must be between 0 and " + (this.width - 1) + "\r\n";
     }
 
     for (int h = this.height - 1; h >= 0; h--) {
@@ -117,7 +117,7 @@ public class ConnectFour {
 
     System.out.println("Column " + col + " is full.");
     turnFailed = true;
-    return "Column " + col + " is full.";
+    return "Column " + col + " is full." + "\r\n";
   }
 
   public String playerTurn(ConnectFour board, int player, int col) {
@@ -126,6 +126,7 @@ public class ConnectFour {
     String output = board.chooseAndDrop(board, symbol, col);
 
     if (board.isWinningPlay()) {
+      gameWon = true;
       System.out.println("\nPlayer " + symbol + " wins!");
       return board + "\r\nPlayer " + symbol + " wins!\r\n";
     }
