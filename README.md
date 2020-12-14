@@ -51,7 +51,7 @@ We created a connect four implementation where two different clients connect to 
 
 ## Demo Video
 
-https://
+https://youtu.be/WqSw2vN-RFE
 
 ## Contributors
 
