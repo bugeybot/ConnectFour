@@ -40,6 +40,7 @@ We created a connect four implementation where two different clients connect to 
 
 ## Run
 ### Connect 4 Commands
+- {help} shows a list of all commands
 - {joingame} makes the previous ‘spectator’  a ‘player’ who can play connect four
 - {start} begins an instance of ConnectFour between the two players
 - {place} advances game of connect four
