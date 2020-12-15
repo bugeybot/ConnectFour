@@ -63,8 +63,8 @@ https://youtu.be/WqSw2vN-RFE
 
 ## Contributors
 
-* Marco Roostaie
-* Nathaniel Gratton
-* Pedro Ferreira
+* Marco Roostaie, Developer and Team meeting organiser
+* Nathaniel Gratton, Developer
+* Pedro Ferreira, Developer
 
 
